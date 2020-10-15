@@ -1,0 +1,29 @@
+Mercearia UNIVALI
+
+Pedido
+	idPedido
+	idCliente FK
+	dtPedido
+	vrPedido
+
+PedidoProduto
+	idPedidoProduto
+	idPedido	FK
+	idProduto	FK
+	qtProduto
+	
+Produto
+	idProduto
+	noProduto
+	deProduto
+	
+Estoque
+	idEstoque
+	idProduto FK
+	qtProduto
+
+Cliente
+	idCliente
+	noCliente
+	nuCPF
+	deEmail
