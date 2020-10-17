@@ -1,4 +1,4 @@
-drop database db_Mercearia_DES;
+-- drop database db_Mercearia_DES;
 
 create database db_Mercearia_DES;
 
