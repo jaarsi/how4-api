@@ -1,4 +1,4 @@
-drop database db_Mercearia_DES;
+-- drop database db_Mercearia_DES;
 
 create database db_Mercearia_DES;
 
@@ -17,7 +17,6 @@ CREATE TABLE `tbProduto` (
   `idProduto` int(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   `noProduto` varchar(250) NOT NULL COMMENT 'Nome do produto',
   `deProduto` varchar(500) NULL COMMENT 'Descrição do produto',
- -- `tpProduto` varchar(500) NULL COMMENT 'Tipo do produto/categoria',
   `vrUnitario` decimal(10,2) NOT NULL COMMENT 'Valor unitário do produto',
   `dtCadastro` datetime NOT NULL COMMENT 'Data em que o produto foi cadastrado',
   `stInativo` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'Situação 0 - ativo/1 - inativo'
@@ -28,14 +27,14 @@ CREATE TABLE `tbEstoque` (
   `idProduto` int(6) UNSIGNED NOT NULL COMMENT 'FK do produto',
   `qtProduto` int(6) NOT NULL COMMENT 'Quantidade disponivel do produto',
   `stInativo` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'Situação 0 - ativo/1 - inativo',
-  CONSTRAINT `FK_ProdutoEstoque` FOREIGN KEY (idProduto) REFERENCES tbProduto(idProduto)
+  CONSTRAINT `FK_ProdutoEstoque` FOREIGN KEY (idProduto) REFERENCES tbProduto(idProduto),
+  CONSTRAINT `UC_Produto` UNIQUE (idProduto)  
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `tbPedido` (
   `idPedido` int(7) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   `idCliente` int(6) UNSIGNED NOT NULL COMMENT 'FK Cliente do pedido',
   `dtPedido` datetime NOT NULL COMMENT 'Data em que o pedido é gerado',  
---  `vrDesconto` decimal(15,2) NOT NULL DEFAULT 0 COMMENT 'Valor de desconto no pedido',
   `vrTotal` decimal(15,2) NOT NULL COMMENT 'Valor total do pedido',
   CONSTRAINT `FK_ClientePedido` FOREIGN KEY (idCliente) REFERENCES tbCliente(idCliente)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -48,8 +47,13 @@ CREATE TABLE `tbPedidoItem` (
   `qtProdutoItem` int(6) NOT NULL COMMENT 'Quantidade solicitada no pedido',
   `vrUnitario` decimal(10,2) NOT NULL COMMENT 'Valor unitário do item do pedido',
   CONSTRAINT `FK_PedidoPedidoItem` FOREIGN KEY (idPedido) REFERENCES tbPedido(idPedido),
-  CONSTRAINT `FK_ProdutoPedidoItem` FOREIGN KEY (idProduto) REFERENCES tbProduto(idProduto)
+  CONSTRAINT `FK_ProdutoPedidoItem` FOREIGN KEY (idProduto) REFERENCES tbProduto(idProduto),
+  CONSTRAINT `UC_PedidoOrdem` UNIQUE (idPedido,nuOrdem)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-------------------------
+-- INSERINDO REGISTROS --
+-------------------------
 
 -- Inserindo clientes
 insert into db_Mercearia_DES.tbCliente(noCliente,nuCPF,deEmail,dtCadastro) values ('João Moraes','00000000000','joaomoraes@gmail.com',sysdate());
@@ -94,7 +98,7 @@ commit;
 
 
 ---------------
--- Consultas --
+-- CONSULTAS --
 ---------------
 
 -- CONSULTAR PEDIDO/ITENS DO PEDIDO
@@ -112,7 +116,7 @@ inner join tbPedido ped on ped.idPedido = pdi.idPedido
 inner join tbCliente cli on cli.idCliente = ped.idCliente
 where ped.idPedido = 1;
 
--- Consultar Itens em Estoque/Disponíveis
+-- CONSULTAR ITENS EM ESTOQUE/DISPONÍVEIS
 select pro.idProduto,
        pro.noProduto,
        pro.deProduto,
