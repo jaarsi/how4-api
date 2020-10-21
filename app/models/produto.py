@@ -1,10 +1,7 @@
-from peewee import Model, PrimaryKeyField, IntegerField, CharField
-
-class BaseModel(Model):
-    class Meta:
-        database = __database
+from peewee import AutoField, IntegerField, CharField
+from . import BaseModel
 
 class Produto(BaseModel):
-    idProduto = PrimaryKeyField()
-	noProduto = IntegerField(default=1, null=False)
+	idProduto = AutoField()
+	noProduto = IntegerField(null=False)
 	deProduto = CharField(null=False)

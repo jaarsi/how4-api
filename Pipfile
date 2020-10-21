@@ -9,6 +9,7 @@ verify_ssl = true
 flask = "*"
 peewee = "*"
 python-dotenv = "*"
+peewee-validates = "*"
 
 [requires]
 python_version = "3.8"
