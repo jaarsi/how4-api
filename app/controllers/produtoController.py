@@ -1,4 +1,5 @@
-from flask import Blueprint, request, jsonify
+from flask import request, jsonify
+from flask.views import MethodView
 from peewee_validates import ModelValidator
 from playhouse.shortcuts import model_to_dict, dict_to_model
 from ..models import Produto, DoesNotExist

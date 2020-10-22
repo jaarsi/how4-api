@@ -207,4 +207,5 @@ dmypy.json
 # profiling data
 
 # End of https://www.toptal.com/developers/gitignore/api/flask,python
+
 database.db
