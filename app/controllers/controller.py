@@ -1,11 +1,11 @@
 from flask import jsonify, request
 from flask.views import MethodView
-from ..services import ProdutoService
 from ..exceptions import DoesNotExist, IntegrityError
+from ..services import Service
 
-class ProdutoController(MethodView):
-    def __init__(self) -> None:
-        self.service = ProdutoService()
+class Controller(MethodView):
+    def __init__(self):
+        self.service: Service = None
 
     def post(self):
         try:
