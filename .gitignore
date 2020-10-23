@@ -1,6 +1,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/flask,python
 # Edit at https://www.toptal.com/developers/gitignore?templates=flask,python
 
+database.db
+.vscode
+
 ### Flask ###
 instance/*
 !instance/.gitignore
@@ -207,5 +210,3 @@ dmypy.json
 # profiling data
 
 # End of https://www.toptal.com/developers/gitignore/api/flask,python
-
-database.db

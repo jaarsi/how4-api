@@ -1,7 +1,7 @@
-from peewee import AutoField, IntegerField, CharField
+from peewee import AutoField, CharField, IntegerField
 from . import BaseModel
 
 class Produto(BaseModel):
-	idProduto = AutoField()
-	noProduto = IntegerField(null=False)
-	deProduto = CharField(null=False)
+	idProduto: int = AutoField()
+	noProduto: int = IntegerField(null=False)
+	deProduto: str = CharField(null=False)
