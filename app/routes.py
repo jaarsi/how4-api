@@ -1,16 +1,14 @@
 from .app import app
-from .controller import Controller
-from .services import ClienteService, ProdutoService, EstoqueService, PedidoService, PedidoItemService
+from .controller import *
 
-endpoints = {
-    'cliente': Controller(ClienteService), 
-    'produto': Controller(ProdutoService),
-    'estoque': Controller(EstoqueService), 
-    'pedido': Controller(PedidoService), 
-    'pedido_item': Controller(PedidoItemService)
+crud_endpoints = {
+    'cliente': ClienteController,
+    'produto': ProdutoController,
+    'estoque': EstoqueController, 
+    'pedido': PedidoController
 }
 
-for endpoint, ctrl in endpoints.items():
+for endpoint, ctrl in crud_endpoints.items():
     app.add_url_rule(f'/{endpoint}', f'{endpoint}_list', view_func=ctrl.list, methods=['GET',])
     app.add_url_rule(f'/{endpoint}', f'{endpoint}_create', view_func=ctrl.create, methods=['POST',])
     app.add_url_rule(f'/{endpoint}/<int:id>', f'{endpoint}_read', view_func=ctrl.read, methods=['GET',])

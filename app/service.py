@@ -1,6 +1,16 @@
 from abc import ABC
 from playhouse.shortcuts import model_to_dict, dict_to_model
-from ..models import Model
+from .exceptions import RegraNegocioError
+from .models import *
+
+__all__ = [
+    'Service',
+    'ClienteService',
+    'ProdutoService',
+    'EstoqueService',
+    'PedidoService',
+    'PedidoItemService'
+]
 
 class Service(ABC):
     model: Model
@@ -37,7 +47,17 @@ class Service(ABC):
     def validate(cls, item: Model):
         pass
 
-from .cliente import ClienteService
-from .produto import ProdutoService
-from .estoque import EstoqueService
-from .pedido import PedidoService, PedidoItemService
+class ClienteService(Service):
+    model = Cliente
+
+class ProdutoService(Service):
+    model = Produto
+
+class EstoqueService(Service):
+    model = Estoque
+
+class PedidoService(Service):
+    model = Pedido
+
+class PedidoItemService(Service):
+    model = PedidoItem

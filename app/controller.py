@@ -1,20 +1,32 @@
+from abc import ABC
+from app.models import PedidoItem
 from flask import jsonify, request
-from .services import Service
+from .service import *
 from .exceptions import DoesNotExist, IntegrityError, RegraNegocioError
 
-class Controller:
-	def __init__(self, service):
-		self.service: Service = service
+__all__ = [
+	'Controller',
+	'ClienteController',
+	'ProdutoController',
+	'EstoqueController',
+	'PedidoController',
+	'PedidoItemController'
+]
 
-	def list(self):
+class Controller(ABC):
+	service: Service
+
+	@classmethod
+	def list(cls):
 		try:
-			return jsonify(self.service.list())
+			return jsonify(cls.service.list())
 		except Exception as error:
 			return jsonify(errors=str(error)), 500
 
-	def create(self):
+	@classmethod
+	def create(cls):
 		try:
-			return jsonify(self.service.create(request.json)), 201
+			return jsonify(cls.service.create(request.json)), 201
 		except IntegrityError as error:
 			return jsonify(errors=error.args), 400
 		except RegraNegocioError as error:
@@ -22,17 +34,19 @@ class Controller:
 		except Exception as error:
 			return jsonify(errors=str(error)), 500
 
-	def read(self, id: int):
+	@classmethod
+	def read(cls, id: int):
 		try:
-			return jsonify(self.service.read(id))
+			return jsonify(cls.service.read(id))
 		except DoesNotExist:
 			return '', 404
 		except Exception as error:
 			return jsonify(errors=str(error)), 500
 
-	def update(self, id: int):
+	@classmethod
+	def update(cls, id: int):
 		try:
-			return jsonify(self.service.update(id, request.json))
+			return jsonify(cls.service.update(id, request.json))
 		except DoesNotExist:
 			return '', 404        
 		except IntegrityError as error:
@@ -42,10 +56,27 @@ class Controller:
 		except Exception as error:
 			return jsonify(errors=str(error)), 500
 
-	def delete(self, id: int):
+	@classmethod
+	def delete(cls, id: int):
 		try:
-			return jsonify(self.service.delete(id))                
+			return jsonify(cls.service.delete(id))                
 		except DoesNotExist:
 			return '', 404
 		except Exception as error:
 			return jsonify(errors=str(error)), 500
+
+
+class ClienteController(Controller):
+	service = ClienteService
+
+class ProdutoController(Controller):
+	service = ProdutoService
+
+class EstoqueController(Controller):
+	service = EstoqueService
+
+class PedidoController(Controller):
+	service = PedidoService
+
+class PedidoItemController(Controller):
+	service: Service = PedidoItemService

@@ -8,8 +8,16 @@ from peewee import (
     DateTimeField, 
     FloatField, 
     ForeignKeyField, 
-    IntegerField
-)
+    IntegerField)
+
+__all__ = [
+	'Model',
+	'Cliente',
+	'Produto',
+	'Estoque',
+	'Pedido',
+	'PedidoItem'
+]
 
 database = SqliteDatabase(
 	'database.db', 
