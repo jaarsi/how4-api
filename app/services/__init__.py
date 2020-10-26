@@ -1,32 +1,43 @@
-from abc import ABC, abstractclassmethod
+from abc import ABC
+from playhouse.shortcuts import model_to_dict, dict_to_model
+from ..models import Model
 
 class Service(ABC):
-    @abstractclassmethod
+    model: Model
+    
+    @classmethod
     def list(cls):
-        pass
+        return [ model_to_dict(item) for item in cls.model.select() ]
 
-    @abstractclassmethod
+    @classmethod
     def create(cls, data: dict):
-        pass
+        item: Model = dict_to_model(cls.model, data)
+        cls.validate(cls, item)
+        item.save()
+        return model_to_dict(item)
 
-    @abstractclassmethod
+    @classmethod
     def read(cls, id: int):
-        pass
+        return model_to_dict(cls.model.get_by_id(id))
 
-    @abstractclassmethod
+    @classmethod
     def update(cls, id: int, data: dict):
-        pass
+        item: Model = dict_to_model(cls.model, data)
+        cls.validate(item)
+        cls.model.update(**data).where(cls.model._meta.primary_key == id)
+        return cls.read(id)
 
-    @abstractclassmethod
+    @classmethod
     def delete(cls, id: int):
-        pass        
+        item = cls.read(id)
+        cls.model.delete_by_id(id)
+        return item
 
-    @abstractclassmethod
-    def validate(cls, data: dict):
+    @classmethod
+    def validate(cls, item: Model):
         pass
 
 from .cliente import ClienteService
 from .produto import ProdutoService
 from .estoque import EstoqueService
-from .pedido import PedidoService
-from .pedido_item import PedidoItemService
+from .pedido import PedidoService, PedidoItemService

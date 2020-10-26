@@ -1,12 +1,6 @@
 from .app import app
 from .controller import Controller
-from .services import (
-    ClienteService, 
-    ProdutoService, 
-    EstoqueService,
-    PedidoService, 
-    PedidoItemService
-)
+from .services import ClienteService, ProdutoService, EstoqueService, PedidoService, PedidoItemService
 
 endpoints = {
     'cliente': Controller(ClienteService), 

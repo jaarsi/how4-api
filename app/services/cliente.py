@@ -1,30 +1,10 @@
-from playhouse.shortcuts import model_to_dict
 from . import Service
 from ..models import Cliente
+from ..exceptions import RegraNegocioError
 
 class ClienteService(Service):
-    @classmethod
-    def list(cls):
-        return [ model_to_dict(item) for item in Cliente.select() ]        
+    model = Cliente
 
-    @classmethod
-    def create(cls, data: dict):
-        cls.validate(data)
-        return model_to_dict(Cliente.create(**data))
-
-    @classmethod
-    def read(cls, id: int):
-        return model_to_dict(Cliente.get(id))
-
-    @classmethod
-    def update(cls, id: int, data: dict):
-        cls.validate(data)
-        return model_to_dict(Cliente.update(**data).where(Cliente.id_cliente == id))
-
-    @classmethod
-    def delete(cls, id: int):
-        return model_to_dict(Cliente.delete().where(Cliente.id_cliente == id))
-
-    @classmethod
-    def validate(cls, data: dict):
-        pass
+    def validate(cls, item: Cliente):
+        if item.no_cliente.strip() == '':
+            raise RegraNegocioError('O nome do cliente não pode estar vazio.')

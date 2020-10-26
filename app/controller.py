@@ -1,6 +1,6 @@
 from flask import jsonify, request
 from .services import Service
-from .exceptions import DoesNotExist, IntegrityError
+from .exceptions import DoesNotExist, IntegrityError, RegraNegocioError
 
 class Controller:
 	def __init__(self, service):
@@ -12,11 +12,12 @@ class Controller:
 		except Exception as error:
 			return jsonify(errors=str(error)), 500
 
-
 	def create(self):
 		try:
 			return jsonify(self.service.create(request.json)), 201
 		except IntegrityError as error:
+			return jsonify(errors=error.args), 400
+		except RegraNegocioError as error:
 			return jsonify(errors=error.args), 400
 		except Exception as error:
 			return jsonify(errors=str(error)), 500
@@ -35,6 +36,8 @@ class Controller:
 		except DoesNotExist:
 			return '', 404        
 		except IntegrityError as error:
+			return jsonify(errors=error.args), 400
+		except RegraNegocioError as error:
 			return jsonify(errors=error.args), 400
 		except Exception as error:
 			return jsonify(errors=str(error)), 500
