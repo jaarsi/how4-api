@@ -1,21 +1,28 @@
 from playhouse.shortcuts import model_to_dict
-from .service import Service
+from . import Service
 from ..models import PedidoItem
 
 class PedidoItemService(Service):
-    def list(self):
-        return [ model_to_dict(p) for p in PedidoItem.select() ]
+    @classmethod
+    def list(cls):
+        return [ model_to_dict(item) for item in PedidoItem.select() ]        
 
-    def create(self, data: dict):
+    @classmethod
+    def create(cls, data: dict):
         return model_to_dict(PedidoItem.create(**data))
 
-    def read(self, id: int):
-        return model_to_dict(PedidoItem.get( PedidoItem.id_pedido_item == id ))
+    @classmethod
+    def read(cls, id: int):
+        return model_to_dict(PedidoItem.get(id))
 
-    def update(self, id: int, data: dict):
-        return model_to_dict(PedidoItem.update(**data).where( PedidoItem.id_pedido_item == id))
+    @classmethod
+    def update(cls, id: int, data: dict):
+        return model_to_dict(PedidoItem.update(**data).where(PedidoItem.id_pedido == id))
 
-    def delete(self, id: int):
-        p: PedidoItem = PedidoItem.get( PedidoItem.id_pedido_item == id )
-        p.delete_instance()
-        return model_to_dict(p)
+    @classmethod
+    def delete(cls, id: int):
+        return model_to_dict(PedidoItem.delete().where(PedidoItem.id_pedido == id))
+
+    @classmethod
+    def validate(cls, data: dict):
+        pass
