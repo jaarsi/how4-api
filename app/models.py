@@ -1,3 +1,4 @@
+from abc import ABC
 from datetime import datetime
 from peewee import (
     SqliteDatabase,
@@ -8,7 +9,8 @@ from peewee import (
     DateTimeField, 
     FloatField, 
     ForeignKeyField, 
-    IntegerField)
+    IntegerField
+)
 
 __all__ = [
 	'Model',
@@ -27,13 +29,13 @@ database = SqliteDatabase(
 		('foreign_keys', 1),
 		('ignore_check_constraints', 0),
 		('synchronous', 0),
-	))
-
-create_database = lambda: database.create_tables([Cliente, Produto, Estoque, Pedido, PedidoItem])
+	)
+)
 
 class BaseModel(Model):
 	class Meta:
 		database = database
+
 
 class Cliente(BaseModel):
 	class Meta:
@@ -46,6 +48,7 @@ class Cliente(BaseModel):
 	dt_cadastro: datetime = DateTimeField(column_name='dtCadastro', null=False)
 	st_inativo: bool = BooleanField(column_name='stInativo', null=False, default=False)
 
+
 class Produto(BaseModel):
 	class Meta:
 		table_name = 'tbProduto'
@@ -56,6 +59,7 @@ class Produto(BaseModel):
 	dt_cadastro: datetime = DateTimeField(column_name='dtCadastro', null=False)
 	st_inativo: bool = BooleanField(column_name='stInativo', null=False, default=False)
 
+
 class Estoque(BaseModel):	
 	class Meta:
 		table_name = 'tbEstoque'
@@ -64,6 +68,7 @@ class Estoque(BaseModel):
 	produto: Produto = ForeignKeyField(Produto, backref='estoque', column_name='idProduto', unique=True)
 	qt_produto: int = IntegerField(column_name='qtProduto', null=False)
 	st_inativo: bool = BooleanField(column_name='stInativo', null=False, default=False)
+
 
 class Pedido(BaseModel):
 	class Meta:
@@ -74,14 +79,14 @@ class Pedido(BaseModel):
 	dt_pedido: datetime = DateTimeField(column_name='dtPedido', null=False)
 	vr_pedido: float = FloatField(column_name='vrPedido', null=False)
 
+
 class PedidoItem(BaseModel):
 	class Meta:
 		table_name = 'tbPedidoItem'
-		# indexes = (	(('idPedido', 'nuOrdem'), True) )
 
 	id_pedido_item: int = AutoField(column_name='idPedidoItem')
 	pedido: Pedido = ForeignKeyField(Pedido, backref='itens', column_name='idPedido')
-	produto: Produto = ForeignKeyField(Produto, backref='+', column_name='idProduto')
+	produto: Produto = ForeignKeyField(Produto, column_name='idProduto')
 	nu_ordem: int = IntegerField(null=False, column_name='nuOrdem')	
 	qt_produto_item: int = IntegerField(null=False, column_name='qtProdutoItem')
 	vr_unitario: float = FloatField(null=False, column_name='vrUnitario')

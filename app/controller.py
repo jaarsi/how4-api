@@ -1,32 +1,22 @@
-from abc import ABC
-from app.models import PedidoItem
 from flask import jsonify, request
-from .service import *
+from .services import Service
 from .exceptions import DoesNotExist, IntegrityError, RegraNegocioError
 
-__all__ = [
-	'Controller',
-	'ClienteController',
-	'ProdutoController',
-	'EstoqueController',
-	'PedidoController',
-	'PedidoItemController'
-]
+class Controller:
+	def __init__(self, service: Service) -> None:
+		self.service = service
 
-class Controller(ABC):
-	service: Service
-
-	@classmethod
-	def list(cls):
+	def list(self, **params):
 		try:
-			return jsonify(cls.service.list())
+			result = self.service.list(*params.values())
+			return jsonify(result)
 		except Exception as error:
 			return jsonify(errors=str(error)), 500
 
-	@classmethod
-	def create(cls):
+	def create(self, **params):
 		try:
-			return jsonify(cls.service.create(request.json)), 201
+			result = self.service.create(*params.values(), data=request.json)
+			return jsonify(result), 201
 		except IntegrityError as error:
 			return jsonify(errors=error.args), 400
 		except RegraNegocioError as error:
@@ -34,21 +24,21 @@ class Controller(ABC):
 		except Exception as error:
 			return jsonify(errors=str(error)), 500
 
-	@classmethod
-	def read(cls, id: int):
+	def read(self, **params):
 		try:
-			return jsonify(cls.service.read(id))
+			result = self.service.read(*params.values())
+			return jsonify(result)
 		except DoesNotExist:
 			return '', 404
 		except Exception as error:
 			return jsonify(errors=str(error)), 500
 
-	@classmethod
-	def update(cls, id: int):
+	def update(self, **params):
 		try:
-			return jsonify(cls.service.update(id, request.json))
+			result = self.service.update(*params.values(), data=request.json)
+			return jsonify(result)
 		except DoesNotExist:
-			return '', 404        
+			return '', 404
 		except IntegrityError as error:
 			return jsonify(errors=error.args), 400
 		except RegraNegocioError as error:
@@ -56,27 +46,11 @@ class Controller(ABC):
 		except Exception as error:
 			return jsonify(errors=str(error)), 500
 
-	@classmethod
-	def delete(cls, id: int):
+	def delete(self, **params):
 		try:
-			return jsonify(cls.service.delete(id))                
+			result = self.service.delete(*params.values())
+			return jsonify(result)
 		except DoesNotExist:
 			return '', 404
 		except Exception as error:
 			return jsonify(errors=str(error)), 500
-
-
-class ClienteController(Controller):
-	service = ClienteService
-
-class ProdutoController(Controller):
-	service = ProdutoService
-
-class EstoqueController(Controller):
-	service = EstoqueService
-
-class PedidoController(Controller):
-	service = PedidoService
-
-class PedidoItemController(Controller):
-	service: Service = PedidoItemService
