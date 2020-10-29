@@ -1,4 +1,5 @@
 from abc import ABC, abstractclassmethod
+from app.exceptions import RegraNegocioError
 from playhouse.shortcuts import model_to_dict
 from .models import *
 
@@ -41,6 +42,11 @@ class Service(ABC):
 
 class ClienteService(Service):
 	model = Cliente
+
+	@classmethod
+	def validate(cls, data: dict):
+		if data['no_cliente'].strip() == '':
+			raise RegraNegocioError('Preencha o nome do cliente')
 
 
 class ProdutoService(Service):

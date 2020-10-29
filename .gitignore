@@ -1,7 +1,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/flask,python
 # Edit at https://www.toptal.com/developers/gitignore?templates=flask,python
 
-database.db
+*.db
+*.db-shm
+*.db-wal
 .vscode/
 
 ### Flask ###
