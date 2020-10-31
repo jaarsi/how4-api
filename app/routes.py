@@ -4,7 +4,7 @@ from .services import *
 from .controller import *
 
 endpoints: Dict[str, Controller] = {
-    "cliente": ClienteController(ProdutoService),
+    "cliente": ClienteController(ClienteService),
     "produto": ProdutoController(ProdutoService),
     "pedido": PedidoController(PedidoService),
 }
@@ -17,7 +17,7 @@ for endpoint, ctrl in endpoints.items():
     app.add_url_rule(f"/{endpoint}/<int:id>", f"{endpoint}_update", view_func=ctrl.update, methods=["PUT",])
     app.add_url_rule(f"/{endpoint}/<int:id>", f"{endpoint}_delete", view_func=ctrl.delete, methods=["DELETE",])
 
-ctrl = Controller(PedidoItemService)
+ctrl = PedidoItemController(PedidoItemService)
 app.add_url_rule("/pedido/<int:pedido_id>/itens", "pedido_item_list", view_func=ctrl.list, methods=["GET",])
 app.add_url_rule("/pedido/<int:pedido_id>/itens", "pedido_item_create", view_func=ctrl.create, methods=["POST",])
 app.add_url_rule("/pedido/<int:pedido_id>/itens/<int:id>", "pedido_item_update", view_func=ctrl.update, methods=["PUT",])
