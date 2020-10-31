@@ -1,56 +1,55 @@
 from flask import jsonify, request
 from .services import Service
-from .exceptions import DoesNotExist, IntegrityError, RegraNegocioError
+from .exceptions import *
+
 
 class Controller:
-	def __init__(self, service: Service) -> None:
-		self.service = service
+    def __init__(self, service: Service):
+        self.__service = service
 
-	def list(self, **params):
-		try:
-			result = self.service.list(*params.values())
-			return jsonify(result)
-		except Exception as error:
-			return jsonify(errors=str(error)), 500
+    def list(self, **kwargs):
+        try:
+            params = kwargs.values()
+            return jsonify(self.__service.list(*params))
+        except Exception as error:
+            return self._handle_error(error)
 
-	def create(self, **params):
-		try:
-			result = self.service.create(*params.values(), data=request.json)
-			return jsonify(result), 201
-		except IntegrityError as error:
-			return jsonify(errors=error.args), 400
-		except RegraNegocioError as error:
-			return jsonify(errors=error.args), 400
-		except Exception as error:
-			return jsonify(errors=str(error)), 500
+    def create(self, **kwargs):
+        try:
+            params = kwargs.values()
+            data = request.json
+            return jsonify(self.__service.create(*params, data=data))
+        except Exception as error:
+            return self._handle_error(error)
 
-	def read(self, **params):
-		try:
-			result = self.service.read(*params.values())
-			return jsonify(result)
-		except DoesNotExist:
-			return '', 404
-		except Exception as error:
-			return jsonify(errors=str(error)), 500
+    def read(self, **kwargs):
+        try:
+            params = kwargs.values()
+            return jsonify(self.__service.read(*params))
+        except Exception as error:
+            return self._handle_error(error)
 
-	def update(self, **params):
-		try:
-			result = self.service.update(*params.values(), data=request.json)
-			return jsonify(result)
-		except DoesNotExist:
-			return '', 404
-		except IntegrityError as error:
-			return jsonify(errors=error.args), 400
-		except RegraNegocioError as error:
-			return jsonify(errors=error.args), 400
-		except Exception as error:
-			return jsonify(errors=str(error)), 500
+    def update(self, **kwargs):
+        try:
+            params = kwargs.values()
+            data = request.json
+            return jsonify(self.__service.update(*params, data=data))
+        except Exception as error:
+            return self._handle_error(error)
 
-	def delete(self, **params):
-		try:
-			result = self.service.delete(*params.values())
-			return jsonify(result)
-		except DoesNotExist:
-			return '', 404
-		except Exception as error:
-			return jsonify(errors=str(error)), 500
+    def delete(self, **kwargs):
+        try:
+            params = kwargs.values()
+            return jsonify(self.__service.delete(*params))
+        except Exception as error:
+            return self._handle_error(error)
+
+    def _handle_error(self, error: Exception, /):
+        if isinstance(error, RegraNegocioError):
+            return jsonify(errors=error.args), 400
+        if isinstance(error, IntegrityError):
+            return jsonify(errors=error.args), 400
+        elif isinstance(error, DoesNotExist):
+            return "", 404
+        else:
+            return jsonify(errors=error.args), 500

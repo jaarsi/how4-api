@@ -1,4 +1,5 @@
 from peewee import DoesNotExist, IntegrityError
 
-class RegraNegocioError(Exception): 
+
+class RegraNegocioError(Exception):
     pass
