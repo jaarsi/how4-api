@@ -21,7 +21,7 @@ __all__ = [
 ]
 
 database = SqliteDatabase(
-    "database.db",
+    ":memory:",
     pragmas=(
         ("journal_mode", "wal"),
         ("cache_size", -1 * 64000),
