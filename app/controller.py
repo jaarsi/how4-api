@@ -1,9 +1,17 @@
+from abc import ABC
 from flask import jsonify, request
 from .services import Service
 from .exceptions import *
 
+__all__ = [
+    'Controller',
+    'ClienteController',
+    'ProdutoController',
+    'PedidoController',
+    'PedidoItemController',
+]
 
-class Controller:
+class Controller(ABC):
     def __init__(self, service: Service):
         self.__service = service
 
@@ -53,3 +61,17 @@ class Controller:
             return "", 404
         else:
             return jsonify(errors=error.args), 500
+
+
+class ClienteController(Controller):
+    pass
+
+class ProdutoController(Controller):
+    pass
+
+class PedidoController(Controller):
+    pass
+
+class PedidoItemController(Controller):
+    pass
+

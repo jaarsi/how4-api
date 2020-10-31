@@ -57,7 +57,7 @@ class Produto(BaseModel):
         table_name = "tbProduto"
 
     id_produto: int = AutoField(column_name="idProduto")
-    no_produto: int = IntegerField(column_name="noProduto", null=False)
+    no_produto: str = CharField(column_name="noProduto", null=False)
     de_produto: str = CharField(column_name="deProduto", null=False)
     qt_estoque: int = IntegerField(column_name="qtEstoque", null=False)
     dt_cadastro: datetime = DateTimeField(column_name="dtCadastro", null=False)

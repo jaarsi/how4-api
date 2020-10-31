@@ -25,7 +25,7 @@ def seed():
         st_inativo=False,
     )
     p = Produto.create(
-        no_produto=1, 
+        no_produto="Camisa", 
         de_produto="Camisa", 
         dt_cadastro=datetime.now(), 
         qt_estoque=randint(1, 100), 

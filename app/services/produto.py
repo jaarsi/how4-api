@@ -13,7 +13,7 @@ class ProdutoService(Service):
             "no_produto": data["no_produto"],
             "de_produto": data["de_produto"],
             "dt_cadastro": datetime.now(),
-            "st_inativo": False,
+            "st_inativo": data["st_inativo"],
         }
         return super().create(*args, data=params)
 

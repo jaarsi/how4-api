@@ -16,7 +16,7 @@ class ClienteService(Service):
             "nu_cpf": data["nu_cpf"],
             "de_email": data["de_email"],
             "dt_cadastro": datetime.now(),
-            "st_inativo": False,
+            "st_inativo": data["st_inativo"],
         }
         return super().create(*args, data=params)
 
