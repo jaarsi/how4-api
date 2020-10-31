@@ -1,2 +1,2 @@
-release: pipenv run flask create-database
-web: pipenv run gunicorn app:app
+release: flask create-database
+web: gunicorn app:app
