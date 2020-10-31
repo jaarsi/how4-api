@@ -19,10 +19,11 @@ class PedidoService(Service):
         }
 
         with atomic() as tx:
-            p = cls.model.create(**params)
-            cls.__save_itens(p, data['itens']) 
+            p: Pedido = cls.model.create(**params)
+            for item in data['itens']:
+                PedidoItemService.create(p.id_pedido, data=item)
 
-        return cls.read(*args)
+        return cls.read(p.id_pedido)
 
     @classmethod
     def read(cls, *args):
@@ -39,27 +40,7 @@ class PedidoService(Service):
             "vr_pedido": data["vr_pedido"],
         }
 
-        with atomic() as tx:            
-            super().update(*params)
-            id, = args
-            p = cls.model.get(id)
-            cls.__save_itens(p, data['itens'])
-
-        return cls.read(*args)
-
-    @classmethod
-    def __save_itens(cls, pedido: Pedido, items: list):
-        items = items or []
-        result = []
-
-        for item in items:
-            try:
-                it = PedidoItemService.update(pedido.id_pedido, item.id_pedido_item, data=item)
-            except DoesNotExist:
-                it = PedidoItemService.create(pedido.id_pedido, data=item)
-            result.append(it)
-
-        return result
+        return super().update(*args, data=params)
 
     @classmethod
     def to_dict(cls, model: Model, **kwargs):

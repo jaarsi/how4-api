@@ -9,7 +9,7 @@ class PedidoItemService(Service):
     @classmethod
     def list(cls, *args):
         id_pedido, = args
-        return [ cls.to_dict(e) for e in cls.model.select().where(cls.model.produto == id_pedido) ]
+        return [ cls.to_dict(e) for e in cls.model.select().where(cls.model.pedido == id_pedido) ]
 
     @classmethod    
     def create(cls, *args, data: dict):
@@ -27,7 +27,7 @@ class PedidoItemService(Service):
     @classmethod
     def read(cls, *args):
         id_pedido, id_item = args
-        return cls.to_dict(cls.model.select().where(
+        return cls.to_dict(cls.model.get(
             cls.model.pedido == id_pedido, 
             cls.model.id_pedido_item == id_item
         ))
