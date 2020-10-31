@@ -12,7 +12,13 @@ from peewee import (
     IntegerField,
 )
 
-__all__ = ["Model", "Cliente", "Produto", "Estoque", "Pedido", "PedidoItem"]
+__all__ = [
+    "Model", 
+    "Cliente", 
+    "Produto", 
+    "Pedido", 
+    "PedidoItem"
+]
 
 database = SqliteDatabase(
     "database.db",
@@ -25,7 +31,7 @@ database = SqliteDatabase(
     ),
 )
 
-create_database = lambda: database.create_tables([Cliente, Produto, Estoque, Pedido, PedidoItem])
+create_database = lambda: database.create_tables([Cliente, Produto, Pedido, PedidoItem])
 atomic = database.atomic
 
 
@@ -53,17 +59,8 @@ class Produto(BaseModel):
     id_produto: int = AutoField(column_name="idProduto")
     no_produto: int = IntegerField(column_name="noProduto", null=False)
     de_produto: str = CharField(column_name="deProduto", null=False)
+    qt_estoque: int = IntegerField(column_name="qtEstoque", null=False)
     dt_cadastro: datetime = DateTimeField(column_name="dtCadastro", null=False)
-    st_inativo: bool = BooleanField(column_name="stInativo", null=False, default=False)
-
-
-class Estoque(BaseModel):
-    class Meta:
-        table_name = "tbEstoque"
-
-    id_estoque: int = AutoField(column_name="idEstoque")
-    produto: Produto = ForeignKeyField(Produto, backref="+", column_name="idProduto", unique=True)
-    qt_produto: int = IntegerField(column_name="qtProduto", null=False)
     st_inativo: bool = BooleanField(column_name="stInativo", null=False, default=False)
 
 
@@ -84,6 +81,6 @@ class PedidoItem(BaseModel):
     id_pedido_item: int = AutoField(column_name="idPedidoItem")
     pedido: Pedido = ForeignKeyField(Pedido, backref="+", column_name="idPedido")
     produto: Produto = ForeignKeyField(Produto, backref="+", column_name="idProduto")
-    nu_ordem: int = IntegerField(null=False, column_name="nuOrdem")
-    qt_produto_item: int = IntegerField(null=False, column_name="qtProdutoItem")
-    vr_unitario: float = FloatField(null=False, column_name="vrUnitario")
+    nu_ordem: int = IntegerField(column_name="nuOrdem", null=False)
+    qt_produto_item: int = IntegerField(column_name="qtProdutoItem", null=False)
+    vr_unitario: float = FloatField(column_name="vrUnitario", null=False)

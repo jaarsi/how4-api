@@ -5,7 +5,6 @@ from .controller import Controller
 endpoints = {
     "cliente": ClienteService,
     "produto": ProdutoService,
-    "estoque": EstoqueService,
     "pedido": PedidoService,
 }
 

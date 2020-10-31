@@ -1,10 +1,10 @@
 from datetime import datetime
+from random import randint
 from .app import app
 from .models import (
     create_database as create_db,
     Cliente,
     Produto,
-    Estoque,
     Pedido,
     PedidoItem,
 )
@@ -24,8 +24,18 @@ def seed():
         dt_cadastro=datetime.now(),
         st_inativo=False,
     )
-    p = Produto.create(no_produto=1, de_produto="Camisa", dt_cadastro=datetime.now(), st_inativo=False)
-    ped = Pedido.create(cliente=c, dt_pedido=datetime.now(), vr_pedido=100)
+    p = Produto.create(
+        no_produto=1, 
+        de_produto="Camisa", 
+        dt_cadastro=datetime.now(), 
+        qt_estoque=randint(1, 100), 
+        st_inativo=False
+    )
+    ped = Pedido.create(
+        cliente=c, 
+        dt_pedido=datetime.now(), 
+        vr_pedido=100
+    )
     PedidoItem.insert_many([
         {
             "pedido": ped,

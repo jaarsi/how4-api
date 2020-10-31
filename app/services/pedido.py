@@ -1,5 +1,5 @@
 from datetime import datetime
-from ..models import atomic, Cliente, Pedido
+from ..models import atomic, Model, Pedido
 from ..exceptions import DoesNotExist
 from .service import Service
 from .pedido_item import PedidoItemService
@@ -7,22 +7,22 @@ from .pedido_item import PedidoItemService
 
 @Service.register
 class PedidoService(Service):
-    model = Pedido
+    model: Pedido = Pedido
 
     @classmethod
     def create(cls, *args, data: dict):
+        cls.validate(data)
         params = {
-            "cliente": Cliente.get_by_id(data["id_cliente"]),
+            "cliente": data["id_cliente"],
             "dt_pedido": datetime.now(),
             "vr_pedido": data["vr_pedido"],
         }
-        items = data["itens"]
 
         with atomic() as tx:
-            p = super().create(**params)
+            p = cls.model.create(**params)
+            cls.__save_itens(p, data['itens']) 
 
-            for item in items:
-                PedidoItemService.create(p.id_pedido, data=item)
+        return cls.read(*args)
 
     @classmethod
     def read(cls, *args):
@@ -32,18 +32,42 @@ class PedidoService(Service):
 
     @classmethod
     def update(cls, *args, data: dict):
+        cls.validate(data)
         params = {
-            "cliente": Cliente.get_by_id(data["id_cliente"]),
+            "cliente": data["id_cliente"],
             "dt_pedido": datetime.now(),
             "vr_pedido": data["vr_pedido"],
         }
 
-        with atomic() as tx:
-            p: Pedido = cls.model.create(**params)
-            items = data["itens"]
+        with atomic() as tx:            
+            super().update(*params)
+            id, = args
+            p = cls.model.get(id)
+            cls.__save_itens(p, data['itens'])
 
-            for item in items:
-                try:
-                    PedidoItemService.update(p.id_pedido, item.id_pedido_item, data=item)
-                except DoesNotExist:
-                    PedidoItemService.create(p.id_pedido, data=item)
+        return cls.read(*args)
+
+    @classmethod
+    def __save_itens(cls, pedido: Pedido, items: list):
+        items = items or []
+        result = []
+
+        for item in items:
+            try:
+                it = PedidoItemService.update(pedido.id_pedido, item.id_pedido_item, data=item)
+            except DoesNotExist:
+                it = PedidoItemService.create(pedido.id_pedido, data=item)
+            result.append(it)
+
+        return result
+
+    @classmethod
+    def to_dict(cls, model: Model, **kwargs):
+        return super().to_dict(model, exclude=(
+            cls.model.cliente.dt_cadastro,
+            cls.model.cliente.st_inativo
+        ))
+
+    @classmethod
+    def validate(cls, data: dict):
+        pass

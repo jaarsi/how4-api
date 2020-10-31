@@ -7,28 +7,28 @@ from .service import Service
 
 @Service.register
 class ClienteService(Service):
-    model = Cliente
+    model: Cliente = Cliente
 
     @classmethod
     def create(cls, *args, data: dict):
-        data = {
+        params = {
             "no_cliente": data["no_cliente"],
             "nu_cpf": data["nu_cpf"],
             "de_email": data["de_email"],
             "dt_cadastro": datetime.now(),
             "st_inativo": False,
         }
-        return super().create(*args, data=data)
+        return super().create(*args, data=params)
 
     @classmethod
     def update(cls, *args, data: dict):
-        data = {
+        params = {
             "no_cliente": data["no_cliente"],
             "nu_cpf": data["nu_cpf"],
             "de_email": data["de_email"],
             "st_inativo": data["st_inativo"],
         }
-        return super().update(*args, data=data)
+        return super().update(*args, data=params)
 
     @classmethod
     def validate(cls, data: dict):
