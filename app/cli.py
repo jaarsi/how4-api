@@ -12,7 +12,10 @@ from .models import (
 
 @app.cli.command("create-database")
 def create_database():
-    create_db()
+    try:
+        create_db()
+    except:
+        pass
 
 
 @app.cli.command("seed-database")
