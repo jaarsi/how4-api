@@ -20,8 +20,8 @@ __all__ = [
     "PedidoItem"
 ]
 
-CONNECTION_STRING = os.getenv('CONNECTION_STRING')
-database = connect(CONNECTION_STRING)
+DATABASE_URL = os.getenv('DATABASE_URL')
+database = connect(DATABASE_URL)
 create_database = lambda: database.create_tables([Cliente, Produto, Pedido, PedidoItem])
 atomic = database.atomic
 
