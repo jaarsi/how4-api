@@ -7,60 +7,50 @@ how4-challenge-api é o componente que representa o back-end do projeto HoW4 (Ha
 Para executar este projeto, as seguintes tecnologias são necessárias:
 
 - Python 3.8+
-- Pip e Pipenv (Gerenciadores de pacote)
+- Pip e Pipenv (gerenciadores de pacote)
 - Flask (web framework)
 - Peewee (orm)
 
 ## Instalação
 
-Este guia tem como base o sistema operacional Linux Ubuntu 20.04:
-
-Verifique a versão do python, deve ser a mesma especificada na seção resumo:
-
-```bash
-python3 --version
-```
-
-Verifique a versão do Pypi (pip3) e do pipenv:
+Este guia tem como base o sistema operacional Linux Ubuntu 20.04.
+Começaremos instalando os pacotes necessários:
 
 ```bash
- pip3 --version
- pipenv --version
-```
-
-Caso o pip não esteja instalado, execute:
-
-```bash
-sudo apt install -y python3-pip
+sudo apt update
+sudo apt install -y python3-pip sqlite3
 pip3 install pipenv
 ```
 
-Tudo correndo bem, é o momento de clonar o repositório:
+Agora é o momento de clonar o repositório:
 
 ```bash
-git clone https://github.com/jaarsi/how4-challenge-api && cd how4-challenge-api
+git clone https://github.com/jaarsi/how4-challenge-api
+cd how4-challenge-api
 ```
 
-Dentro da pasta clonada, é o momento de instalar as dependências do projeto, para tal tarefa, usaremos o pipenv:
+A partir da pasta clonada, instalaremos as dependências do projeto. Para tal tarefa, usaremos o pipenv:
 
 ```bash
 pipenv install
 ```
 
-O utilitário pipenv se encarregara de criar o ambiente virtual e instalar as dependências do projeto.
+O utilitário pipenv se encarregará de criar o ambiente virtual e instalar as dependências do projeto.
 O proximo passo é criar uma arquivo ".env". Esse arquivo contém toda as configurações inerentes ao ambiente de desenvolvimento.
 
 ```text
 FLASK_ENV=development
 FLASK_DEBUG=1
+DATABASE_URL=sqlite:///database.db
 ```
 
 Uma breve explicação:
 
 - FLASK_ENV: Indica o ambiente na qual o sistema será executado. Util para detectar quando a api está rodando em modo de testes, desenvolvimento ou produção.
 - FLASK_DEBUG: Indica se o projeto será executado em modo debug. Este modo permite inspecionar a execução interna do programa e é bem util no diagnóstico de bugs.
+- DATABASE_URL: Contém a connection string que identifica o repositório de dados.
 
-Em seguida, vamos criar o banco de dados, para tal tarefa, 2 comandos foram criados:
+Em seguida, vamos criar as tabelas do banco de dados, para tal tarefa, 2 comandos estão disponíveis:
 
 ```bash
 pipenv run flask create-database
