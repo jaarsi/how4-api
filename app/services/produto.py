@@ -10,20 +10,20 @@ class ProdutoService(Service):
     @classmethod
     def create(cls, *args, data: dict):
         params = {
-            "no_produto": data["no_produto"],
-            "de_produto": data["de_produto"],
+            "no_produto": data.get("no_produto"),
+            "de_produto": data.get("de_produto"),
             "dt_cadastro": datetime.now(),
-            "st_inativo": data["st_inativo"],
+            "st_inativo": data.get("st_inativo"),
         }
         return super().create(*args, data=params)
 
     @classmethod
     def update(cls, *args, data: dict):
         params = {
-            "no_produto": data["no_produto"],
-            "de_produto": data["de_produto"],
+            "no_produto": data.get("no_produto"),
+            "de_produto": data.get("de_produto"),
             "dt_cadastro": datetime.now(),
-            "st_inativo": data["st_inativo"],
+            "st_inativo": data.get("st_inativo"),
         }
         return super().update(*args, data=params)
 

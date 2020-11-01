@@ -13,9 +13,9 @@ class PedidoService(Service):
     def create(cls, *args, data: dict):
         cls.validate(data)
         params = {
-            "cliente": data["id_cliente"],
+            "cliente": data.get("id_cliente"),
             "dt_pedido": datetime.now(),
-            "vr_pedido": data["vr_pedido"],
+            "vr_pedido": data.get("vr_pedido"),
         }
 
         with atomic() as tx:
@@ -35,9 +35,9 @@ class PedidoService(Service):
     def update(cls, *args, data: dict):
         cls.validate(data)
         params = {
-            "cliente": data["id_cliente"],
+            "cliente": data.get("id_cliente"),
             "dt_pedido": datetime.now(),
-            "vr_pedido": data["vr_pedido"],
+            "vr_pedido": data.get("vr_pedido"),
         }
 
         return super().update(*args, data=params)

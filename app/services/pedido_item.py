@@ -17,10 +17,10 @@ class PedidoItemService(Service):
         id_pedido, = args
         params = {
             "pedido": id_pedido,
-            "produto": data["id_produto"],
+            "produto": data.get("id_produto"),
             "nu_ordem": 1,
-            "qt_produto_item": data["qt_produto_item"],
-            "vr_unitario": data["vr_unitario"],
+            "qt_produto_item": data.get("qt_produto_item"),
+            "vr_unitario": data.get("vr_unitario"),
         }
         return cls.to_dict(cls.model.create(**params))
 
@@ -37,9 +37,9 @@ class PedidoItemService(Service):
         cls.validate(data)
         id_pedido, id_item = args
         params = {
-            "produto": data["id_produto"],
-            "qt_produto_item": data["qt_produto_item"],
-            "vr_unitario": data["vr_unitario"],
+            "produto": data.get("id_produto"),
+            "qt_produto_item": data.get("qt_produto_item"),
+            "vr_unitario": data.get("vr_unitario"),
         }
         cls.model.update(**params).where(
             cls.model.pedido == id_pedido, 

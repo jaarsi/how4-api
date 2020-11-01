@@ -63,15 +63,19 @@ class Controller(ABC):
             return jsonify(errors=error.args), 500
 
 
+@Controller.register
 class ClienteController(Controller):
     pass
 
+@Controller.register
 class ProdutoController(Controller):
     pass
 
+@Controller.register
 class PedidoController(Controller):
     pass
 
+@Controller.register
 class PedidoItemController(Controller):
     pass
 

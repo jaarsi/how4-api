@@ -1,7 +1,7 @@
-from abc import ABC
+import os
 from datetime import datetime
+from playhouse.db_url import connect
 from peewee import (
-    SqliteDatabase,
     Model,
     AutoField,
     BooleanField,
@@ -20,20 +20,10 @@ __all__ = [
     "PedidoItem"
 ]
 
-database = SqliteDatabase(
-    ":memory:",
-    pragmas=(
-        ("journal_mode", "wal"),
-        ("cache_size", -1 * 64000),
-        ("foreign_keys", 1),
-        ("ignore_check_constraints", 0),
-        ("synchronous", 0),
-    ),
-)
-
+CONNECTION_STRING = os.getenv('CONNECTION_STRING')
+database = connect(CONNECTION_STRING)
 create_database = lambda: database.create_tables([Cliente, Produto, Pedido, PedidoItem])
 atomic = database.atomic
-
 
 class BaseModel(Model):
     class Meta:

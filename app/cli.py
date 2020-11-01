@@ -9,7 +9,6 @@ from .models import (
     PedidoItem,
 )
 
-
 @app.cli.command("create-database")
 def create_database():
     try:
