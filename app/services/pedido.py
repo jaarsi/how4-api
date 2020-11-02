@@ -3,6 +3,7 @@ from ..models import atomic, Model, Pedido
 from ..exceptions import DoesNotExist
 from .service import Service
 from .pedido_item import PedidoItemService
+from .cliente import ClienteService
 
 
 @Service.register
@@ -51,4 +52,15 @@ class PedidoService(Service):
 
     @classmethod
     def validate(cls, data: dict):
-        pass
+        errors = {}
+
+        try:
+            ClienteService.read(data.get("id_cliente", -1))
+        except DoesNotExist:
+            errors["id_cliente"] = "o cliente indicado não existe",
+
+        if not data.get("itens"):
+            errors["itens"] = "o pedido enviado não possui itens",
+
+        if errors:
+            raise RegraNegocioError(errors)
