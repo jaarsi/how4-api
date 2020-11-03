@@ -28,4 +28,13 @@ class ProdutoService(Service):
 
     @classmethod
     def validate(cls, data: dict):
-        pass
+        errors = {}
+
+        if data.get("no_produto", "").strip() == "":
+            errors["no_produto"] = ("O nome do produto não pode estar vazio",)
+
+        if data.get("de_produto", "").strip() == "":
+            errors["de_produto"] = ("A descrição do produto não pode estar vazia",)
+
+        if errors:
+            raise RegraNegocioError(errors)
