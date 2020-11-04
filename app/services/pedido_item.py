@@ -68,4 +68,15 @@ class PedidoItemService(Service):
 
     @classmethod
     def validate(cls, data: dict):
-        pass
+        errors = {}
+
+        try:
+            ClienteService.read(data.get("id_produto", -1))
+        except DoesNotExist:
+            errors["id_produto"] = "o produto indicado não existe",
+
+        if data.get("vr_unitario", "").strip() == "":
+            errors["vr_unitario"] = ("O valor não é válido",)
+
+        if errors:
+            raise RegraNegocioError(errors)
