@@ -21,7 +21,7 @@ class PedidoService(Service):
 
         with atomic() as tx:
             p: Pedido = cls.model.create(**params)
-            for item in data['itens']:
+            for item in data.get('itens', []):
                 PedidoItemService.create(p.id_pedido, data=item)
 
         return cls.read(p.id_pedido)
