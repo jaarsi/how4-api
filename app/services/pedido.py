@@ -59,7 +59,7 @@ class PedidoService(Service):
         except DoesNotExist:
             errors.append("O cliente indicado não existe")
 
-        if not data.get("itens"):
+        if not data.get("itens", []):
             errors.append("o pedido enviado não possui itens")
 
         if errors:
