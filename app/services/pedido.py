@@ -1,6 +1,6 @@
 from datetime import datetime
 from ..models import atomic, Model, Pedido
-from ..exceptions import DoesNotExist
+from ..exceptions import DoesNotExist, RegraNegocioError
 from .service import Service
 from .pedido_item import PedidoItemService
 from .cliente import ClienteService
@@ -52,15 +52,15 @@ class PedidoService(Service):
 
     @classmethod
     def validate(cls, data: dict):
-        errors = {}
+        errors = []
 
         try:
             ClienteService.read(data.get("id_cliente", -1))
         except DoesNotExist:
-            errors["id_cliente"] = "o cliente indicado não existe",
+            errors.append("O cliente indicado não existe")
 
         if not data.get("itens"):
-            errors["itens"] = "o pedido enviado não possui itens",
+            errors.append("o pedido enviado não possui itens")
 
         if errors:
             raise RegraNegocioError(errors)

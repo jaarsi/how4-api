@@ -1,5 +1,8 @@
 from ..models import Model, PedidoItem
+from ..exceptions import DoesNotExist, RegraNegocioError
 from .service import Service
+from .pedido import PedidoService
+from .produto import ProdutoService
 
 
 @Service.register
@@ -37,6 +40,7 @@ class PedidoItemService(Service):
         cls.validate(data)
         id_pedido, id_item = args
         params = {
+            "pedido": id_pedido,
             "produto": data.get("id_produto"),
             "qt_produto_item": data.get("qt_produto_item"),
             "vr_unitario": data.get("vr_unitario"),
@@ -68,26 +72,26 @@ class PedidoItemService(Service):
 
     @classmethod
     def validate(cls, data: dict):
-        errors = {}
+        errors = []
 
         try:
             produto = ProdutoService.read(data.get("id_produto", -1))
+
+            if produto.get("qt_estoque", 0) < data.get("qt_produto_item", 0):
+                errors.append("A quantidade requisitada é inferior ao estoque")
         except DoesNotExist:
-            errors["id_produto"] = "o produto indicado não existe",
+            errors.append("o produto indicado não existe")
 
         try:
             PedidoService.read(data.get("id_pedido", -1))
         except DoesNotExist:
-            errors["id_pedido"] = "o pedido indicado não existe",
+            errors.append("o pedido indicado no item não existe")
 
         if data.get("vr_unitario", 0) <= 0:
-            errors["vr_unitario"] = ("O valor unitário do produto deve ser positivo e maior que 0",)
+            errors.append("O valor unitário do produto deve ser positivo e maior que 0")
 
         if data.get("qt_produto_item", 0) <= 0:
-            errors["qt_produto_item"] = ("A quantidade de produto deve ser positiva e maior que 0",)
-
-        if produto.get("qt_estoque", 0) < data.get("qt_produto_item", 0):
-            errors["qt_produto_item"] = ("A quantidade requisitada é inferior ao estoque",)
+            errors.append("A quantidade de produto deve ser positiva e maior que 0")
 
         if errors:
             raise RegraNegocioError(errors)

@@ -32,19 +32,19 @@ class ClienteService(Service):
 
     @classmethod
     def validate(cls, data: dict):
-        errors = {}
+        errors = []
 
         if data.get("no_cliente", "").strip() == "":
-            errors["no_cliente"] = ("O nome do cliente não pode estar vazio",)
+            errors.append("O nome do cliente não pode estar vazio")
 
         if data.get("nu_cpf", "").strip() == "":
-            errors["nu_cpf"] = ("O CPF do cliente não pode estar vazio",)
+            errors.append("O CPF do cliente não pode estar vazio")
         else:
             if not re.match("^\d{3}\.\d{3}\.\d{3}\-\d{2}$", data.get("nu_cpf", "")):
-                errors["nu_cpf"] = ("O CPF informado não é válido",)
+                errors.append("O CPF informado não é válido")
 
         if data.get("de_email", "").strip() == "":
-            errors["de_email"] = ("O email do cliente não pode estar vazio",)
+            errors.append("O email do cliente não pode estar vazio")
 
         if errors:
             raise RegraNegocioError(errors)
