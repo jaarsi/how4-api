@@ -71,12 +71,23 @@ class PedidoItemService(Service):
         errors = {}
 
         try:
-            ClienteService.read(data.get("id_produto", -1))
+            produto = ProdutoService.read(data.get("id_produto", -1))
         except DoesNotExist:
             errors["id_produto"] = "o produto indicado não existe",
 
-        if data.get("vr_unitario", "").strip() == "":
-            errors["vr_unitario"] = ("O valor não é válido",)
+        try:
+            PedidoService.read(data.get("id_pedido", -1))
+        except DoesNotExist:
+            errors["id_pedido"] = "o pedido indicado não existe",
+
+        if data.get("vr_unitario", 0) <= 0:
+            errors["vr_unitario"] = ("O valor unitário do produto deve ser positivo e maior que 0",)
+
+        if data.get("qt_produto_item", 0) <= 0:
+            errors["qt_produto_item"] = ("A quantidade de produto deve ser positiva e maior que 0",)
+
+        if produto.get("qt_estoque", 0) < data.get("qt_produto_item", 0):
+            errors["qt_produto_item"] = ("A quantidade requisitada é inferior ao estoque",)
 
         if errors:
             raise RegraNegocioError(errors)
