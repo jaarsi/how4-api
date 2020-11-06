@@ -1,7 +1,7 @@
 from ..models import Model, PedidoItem
 from ..exceptions import DoesNotExist, RegraNegocioError
 from .service import Service
-from .pedido import PedidoService
+# from .pedido import PedidoService
 from .produto import ProdutoService
 
 
@@ -82,10 +82,10 @@ class PedidoItemService(Service):
         except DoesNotExist:
             errors.append("o produto indicado não existe")
 
-        try:
-            PedidoService.read(data.get("id_pedido", -1))
-        except DoesNotExist:
-            errors.append("o pedido indicado no item não existe")
+        # try:
+        #     PedidoService.read(data.get("id_pedido", -1))
+        # except DoesNotExist:
+        #     errors.append("o pedido indicado no item não existe")
 
         if data.get("vr_unitario", 0) <= 0:
             errors.append("O valor unitário do produto deve ser positivo e maior que 0")

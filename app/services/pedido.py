@@ -2,8 +2,8 @@ from datetime import datetime
 from ..models import atomic, Model, Pedido
 from ..exceptions import DoesNotExist, RegraNegocioError
 from .service import Service
-from .pedido_item import PedidoItemService
 from .cliente import ClienteService
+from .pedido_item import PedidoItemService
 
 
 @Service.register
