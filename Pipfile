@@ -11,6 +11,7 @@ peewee = "*"
 python-dotenv = "*"
 gunicorn = "*"
 psycopg2 = "*"
+flask-cors = "*"
 
 [requires]
 python_version = "3.8"
