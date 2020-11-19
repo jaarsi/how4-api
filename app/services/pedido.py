@@ -52,8 +52,9 @@ class PedidoService(Service):
 
         return cls.read(p['id_pedido'])
 
+    @classmethod
     def delete(cls, *args) -> dict:
-        PedidoItemService.delete_all()
+        PedidoItemService.delete_all(*args)
         return super().delete(*args)
 
     @classmethod
