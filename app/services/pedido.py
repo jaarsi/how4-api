@@ -24,9 +24,9 @@ class PedidoService(Service):
         with atomic() as tx:
             p: Pedido = super().create(*args, data=params)
             for item in data.get("itens"):
-                PedidoItemService.create(p.id_pedido, data=item)
+                PedidoItemService.create(p['id_pedido'], data=item)
 
-        return cls.read(p.id_pedido)
+        return cls.read(p['id_pedido'])
 
     @classmethod
     def read(cls, *args):
@@ -48,16 +48,20 @@ class PedidoService(Service):
             PedidoItemService.delete_all(*args)
             p: Pedido = super().update(*args, data=params)
             for item in data.get("itens"):
-                PedidoItemService.create(*args, data=item)
+                PedidoItemService.create(p['id_pedido'], data=item)
 
-        return cls.read(*args)
+        return cls.read(p['id_pedido'])
+
+    def delete(cls, *args) -> dict:
+        PedidoItemService.delete_all()
+        return super().delete(*args)
 
     @classmethod
     def to_dict(cls, model: Model, **kwargs):
         return super().to_dict(model, exclude=(
             cls.model.cliente.dt_cadastro,
             cls.model.cliente.st_inativo
-        ))
+        ))        
 
     @classmethod
     def validate(cls, data: dict):
