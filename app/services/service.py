@@ -24,7 +24,7 @@ class Service(ABC):
     def update(cls, *args, data: dict):
         cls.validate(data)
         id, = args
-        cls.model.set_by_id(id, **data)
+        cls.model.set_by_id(id, data)
         return cls.read(id)
 
     @classmethod

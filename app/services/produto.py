@@ -43,4 +43,4 @@ class ProdutoService(Service):
             errors.append("A quantidade em estoque deve superiror a 0")
 
         if errors:
-            raise RegraNegocioError(errors)
+            raise RegraNegocioError(*errors)

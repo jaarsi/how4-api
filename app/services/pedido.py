@@ -12,16 +12,18 @@ class PedidoService(Service):
 
     @classmethod
     def create(cls, *args, data: dict):
-        cls.validate(data)
         params = {
             "cliente": data.get("id_cliente"),
             "dt_pedido": datetime.now(),
             "vr_pedido": data.get("vr_pedido"),
         }
 
+        if not data.get("itens", []):
+            raise RegraNegocioError("o pedido enviado não possui itens")
+                
         with atomic() as tx:
-            p: Pedido = cls.model.create(**params)
-            for item in data.get('itens', []):
+            p: Pedido = super().create(*args, data=params)
+            for item in data.get("itens"):
                 PedidoItemService.create(p.id_pedido, data=item)
 
         return cls.read(p.id_pedido)
@@ -34,14 +36,21 @@ class PedidoService(Service):
 
     @classmethod
     def update(cls, *args, data: dict):
-        cls.validate(data)
         params = {
             "cliente": data.get("id_cliente"),
-            "dt_pedido": datetime.now(),
             "vr_pedido": data.get("vr_pedido"),
         }
 
-        return super().update(*args, data=params)
+        if not data.get("itens", []):
+            raise RegraNegocioError("o pedido enviado não possui itens")
+        
+        with atomic() as tx:
+            PedidoItemService.delete_all(*args)
+            p: Pedido = super().update(*args, data=params)
+            for item in data.get("itens"):
+                PedidoItemService.create(*args, data=item)
+
+        return cls.read(*args)
 
     @classmethod
     def to_dict(cls, model: Model, **kwargs):
@@ -55,12 +64,9 @@ class PedidoService(Service):
         errors = []
 
         try:
-            ClienteService.read(data.get("id_cliente", -1))
+            ClienteService.read(data.get("cliente", -1))
         except DoesNotExist:
             errors.append("O cliente indicado não existe")
 
-        if not data.get("itens", []):
-            errors.append("o pedido enviado não possui itens")
-
         if errors:
-            raise RegraNegocioError(errors)
+            raise RegraNegocioError(*errors)

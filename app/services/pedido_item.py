@@ -1,7 +1,6 @@
 from ..models import Model, PedidoItem
 from ..exceptions import DoesNotExist, RegraNegocioError
 from .service import Service
-# from .pedido import PedidoService
 from .produto import ProdutoService
 
 
@@ -16,7 +15,6 @@ class PedidoItemService(Service):
 
     @classmethod    
     def create(cls, *args, data: dict):
-        cls.validate(data)
         id_pedido, = args
         params = {
             "pedido": id_pedido,
@@ -25,6 +23,7 @@ class PedidoItemService(Service):
             "qt_produto_item": data.get("qt_produto_item"),
             "vr_unitario": data.get("vr_unitario"),
         }
+        cls.validate(params)
         return cls.to_dict(cls.model.create(**params))
 
     @classmethod
@@ -37,7 +36,6 @@ class PedidoItemService(Service):
 
     @classmethod
     def update(cls, *args, data: dict):
-        cls.validate(data)
         id_pedido, id_item = args
         params = {
             "pedido": id_pedido,
@@ -45,6 +43,7 @@ class PedidoItemService(Service):
             "qt_produto_item": data.get("qt_produto_item"),
             "vr_unitario": data.get("vr_unitario"),
         }
+        cls.validate(params)
         cls.model.update(**params).where(
             cls.model.pedido == id_pedido, 
             cls.model.id_pedido_item == id_item
@@ -61,10 +60,15 @@ class PedidoItemService(Service):
         return cls.read(id_pedido, id_item)
 
     @classmethod
+    def delete_all(cls, *args) -> dict:
+        id_pedido, = args
+        cls.model.delete().where(cls.model.pedido == id_pedido).execute()
+        return cls.list(id_pedido)
+
+    @classmethod
     def to_dict(cls, model: Model, **kwargs):
         return super().to_dict(model, exclude=(
             cls.model.pedido,
-            cls.model.produto.no_produto,
             cls.model.produto.qt_estoque,
             cls.model.produto.dt_cadastro,
             cls.model.produto.st_inativo,
@@ -75,17 +79,12 @@ class PedidoItemService(Service):
         errors = []
 
         try:
-            produto = ProdutoService.read(data.get("id_produto", -1))
+            produto = ProdutoService.read(data.get("produto", -1))
 
             if produto.get("qt_estoque", 0) < data.get("qt_produto_item", 0):
                 errors.append("A quantidade requisitada é inferior ao estoque")
         except DoesNotExist:
             errors.append("o produto indicado não existe")
-
-        # try:
-        #     PedidoService.read(data.get("id_pedido", -1))
-        # except DoesNotExist:
-        #     errors.append("o pedido indicado no item não existe")
 
         if data.get("vr_unitario", 0) <= 0:
             errors.append("O valor unitário do produto deve ser positivo e maior que 0")
@@ -94,4 +93,4 @@ class PedidoItemService(Service):
             errors.append("A quantidade de produto deve ser positiva e maior que 0")
 
         if errors:
-            raise RegraNegocioError(errors)
+            raise RegraNegocioError(*errors)

@@ -47,4 +47,4 @@ class ClienteService(Service):
             errors.append("O email do cliente não pode estar vazio")
 
         if errors:
-            raise RegraNegocioError(errors)
+            raise RegraNegocioError(*errors)
