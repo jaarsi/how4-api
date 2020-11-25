@@ -50,9 +50,19 @@ class PedidoService(CRUDService):
             return super().delete(id_pedido)
 
     @classmethod
-    def create_items(cls, pedido, items: dict):
+    def create_items(cls, pedido, items: list):
         for item in items:
-            PedidoItem.create(pedido=pedido, **item)    
+            cls.create_item(pedido, item)
+
+    @classmethod
+    def create_item(cls, pedido, item: dict):
+        params = {
+            "nu_ordem": item.get("nu_ordem", 1),
+            "produto": item.get("produto", -1),
+            "qt_produto_item": item.get("qt_produto_item"),
+            "vr_unitario": item.get("vr_unitario")
+        }
+        return PedidoItem.create(pedido=pedido, **params)
 
     @classmethod
     def validate(cls, data: dict):
