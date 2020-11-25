@@ -49,6 +49,7 @@ class PedidoService(CRUDService):
     @classmethod
     def delete(cls, id_pedido) -> dict:
         with atomic():
+            cls.restock(id_pedido)
             cls.remove_all_items(id_pedido)
             return super().delete(id_pedido)
 
