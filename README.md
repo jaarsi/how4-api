@@ -153,8 +153,17 @@ Retorna um pedido identificado pelo id indicado na url.
 Grava um pedido.
 
 ```text
-    id_cliente: int
+    cliente: int
     vr_pedido: float
+    itens: list[item]
+```
+
+Formato do item
+```
+    nu_ordem: int
+    produto: int
+    qt_produto_item: float
+    vr_unitario: float
 ```
 
 #### PUT /pedido/<int:id>
@@ -162,46 +171,19 @@ Grava um pedido.
 Atualiza um pedido identificado pelo id indicado na url.
 
 ```text
-    id_cliente: int
+    cliente: int
     vr_pedido: float
+    itens: list[item]
+```
+
+Formato do item
+```
+    nu_ordem: int
+    produto: int
+    qt_produto_item: float
+    vr_unitario: float
 ```
 
 #### DELETE /pedido/<int:id>
 
 Exclui um pedido identificado pelo id indicado na url.
-
-#### GET /pedido/<int:pedido_id>/itens
-
-Retorna os itens do pedido identificado pelo id indicado na url.
-
-#### GET /pedido/<int:pedido_id>/itens/<int:item_id>
-
-Retorna o item do pedido identificado pelos ids indicados na url.
-
-#### POST /pedido/<int:pedido_id>/itens
-
-Adiciona um item ao pedido identificado pelo id indicado na url.
-
-```text
-    id_pedido: int
-    id_produto: int
-    nu_ordem: int
-    qt_produto_item: int
-    vr_unitario: float
-```
-
-#### PUT /pedido/<int:pedido_id>/itens/<int:item_id>
-
-Adiciona um item ao pedido identificado pelos ids indicados na url.
-
-```text
-    id_pedido: int
-    id_produto: int
-    nu_ordem: int
-    qt_produto_item: int
-    vr_unitario: float
-```
-
-#### DELETE /pedido/<int:pedido_id>/itens/<int:item_id>
-
-Exclui o item do pedido identificado pelos ids indicados na url.
