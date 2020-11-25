@@ -1,15 +1,15 @@
 from datetime import datetime
-from ..models import Produto
-from ..exceptions import RegraNegocioError
-from .service import Service
+from ...models import Produto
+from ...exceptions import RegraNegocioError
+from . import CRUDService
 
 
-@Service.register
-class ProdutoService(Service):
-    model: Produto = Produto
+@CRUDService.register
+class ProdutoService(CRUDService):
+    model = Produto
 
     @classmethod
-    def create(cls, *args, data: dict):
+    def create(cls, data: dict) -> Produto:
         params = {
             "no_produto": data.get("no_produto"),
             "de_produto": data.get("de_produto"),
@@ -17,17 +17,17 @@ class ProdutoService(Service):
             "dt_cadastro": datetime.now(),
             "st_inativo": data.get("st_inativo"),
         }
-        return super().create(*args, data=params)
+        return super().create(data=params)
 
     @classmethod
-    def update(cls, *args, data: dict):
+    def update(cls, id_produto, data: dict) -> Produto:
         params = {
             "no_produto": data.get("no_produto"),
             "de_produto": data.get("de_produto"),
             "qt_estoque": data.get("qt_estoque"),
             "st_inativo": data.get("st_inativo"),
         }
-        return super().update(*args, data=params)
+        return super().update(id_produto, data=params)
 
     @classmethod
     def validate(cls, data: dict):

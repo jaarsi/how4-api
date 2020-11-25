@@ -1,16 +1,16 @@
 import re
 from datetime import datetime
-from ..models import Cliente
-from ..exceptions import RegraNegocioError
-from .service import Service
+from ...models import Cliente
+from ...exceptions import RegraNegocioError
+from . import CRUDService
 
 
-@Service.register
-class ClienteService(Service):
-    model: Cliente = Cliente
+@CRUDService.register
+class ClienteService(CRUDService):
+    model = Cliente
 
     @classmethod
-    def create(cls, *args, data: dict):
+    def create(cls, data: dict) -> Cliente:
         params = {
             "no_cliente": data.get("no_cliente"),
             "nu_cpf": data.get("nu_cpf"),
@@ -18,17 +18,17 @@ class ClienteService(Service):
             "dt_cadastro": datetime.now(),
             "st_inativo": data.get("st_inativo"),
         }
-        return super().create(*args, data=params)
+        return super().create(data=params)
 
     @classmethod
-    def update(cls, *args, data: dict):
+    def update(cls, id_cliente, data: dict) -> Cliente:
         params = {
             "no_cliente": data.get("no_cliente"),
             "nu_cpf": data.get("nu_cpf"),
             "de_email": data.get("de_email"),
             "st_inativo": data.get("st_inativo"),
         }
-        return super().update(*args, data=params)
+        return super().update(id_cliente, data=params)
 
     @classmethod
     def validate(cls, data: dict):

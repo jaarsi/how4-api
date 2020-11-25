@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 from playhouse.db_url import connect
+from playhouse.shortcuts import model_to_dict
 from peewee import (
     Model,
     AutoField,
@@ -28,6 +29,9 @@ atomic = database.atomic
 class BaseModel(Model):
     class Meta:
         database = database
+
+    def to_dict(self, **kwargs):
+        return model_to_dict(self, **kwargs)
 
 
 class Cliente(BaseModel):
@@ -69,7 +73,7 @@ class PedidoItem(BaseModel):
         table_name = "tbPedidoItem"
 
     id_pedido_item: int = AutoField(column_name="idPedidoItem")
-    pedido: Pedido = ForeignKeyField(Pedido, backref="+", column_name="idPedido")
+    pedido: Pedido = ForeignKeyField(Pedido, backref="itens", column_name="idPedido")
     produto: Produto = ForeignKeyField(Produto, backref="+", column_name="idProduto")
     nu_ordem: int = IntegerField(column_name="nuOrdem", null=False)
     qt_produto_item: int = IntegerField(column_name="qtProdutoItem", null=False)

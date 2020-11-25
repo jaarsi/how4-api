@@ -1,54 +1,43 @@
 from abc import ABC
 from flask import jsonify, request
-from .services import Service
-from .exceptions import *
+from ...services import CRUDService
+from ...exceptions import *
 
-__all__ = [
-    'Controller',
-    'ClienteController',
-    'ProdutoController',
-    'PedidoController',
-    'PedidoItemController',
-]
-
-class Controller(ABC):
-    def __init__(self, service: Service):
-        self.__service = service
+class CRUDController(ABC):
+    service: CRUDService
 
     def list(self, **kwargs):
         try:
             params = kwargs.values()
-            return jsonify(self.__service.list(*params))
+            return jsonify([ e.to_dict() for e in self.service.list(*params) ])
         except Exception as error:
             return self._handle_error(error)
 
     def create(self, **kwargs):
         try:
             params = kwargs.values()
-            data = request.json
-            return jsonify(self.__service.create(*params, data=data))
+            return jsonify(self.service.create(*params, data=request.json).to_dict(backrefs=True))
         except Exception as error:
             return self._handle_error(error)
 
     def read(self, **kwargs):
         try:
             params = kwargs.values()
-            return jsonify(self.__service.read(*params))
+            return jsonify(self.service.read(*params).to_dict(backrefs=True))
         except Exception as error:
             return self._handle_error(error)
 
     def update(self, **kwargs):
         try:
             params = kwargs.values()
-            data = request.json
-            return jsonify(self.__service.update(*params, data=data))
+            return jsonify(self.service.update(*params, data=request.json).to_dict(backrefs=True))
         except Exception as error:
             return self._handle_error(error)
 
     def delete(self, **kwargs):
         try:
             params = kwargs.values()
-            return jsonify(self.__service.delete(*params))
+            return jsonify(self.service.delete(*params).to_dict())
         except Exception as error:
             return self._handle_error(error)
 
@@ -60,22 +49,5 @@ class Controller(ABC):
         elif isinstance(error, DoesNotExist):
             return "", 404
         else:
-            return jsonify(errors=error.args), 500
-
-
-@Controller.register
-class ClienteController(Controller):
-    pass
-
-@Controller.register
-class ProdutoController(Controller):
-    pass
-
-@Controller.register
-class PedidoController(Controller):
-    pass
-
-@Controller.register
-class PedidoItemController(Controller):
-    pass
-
+            return jsonify(errors=str(error)), 500
+    
