@@ -54,7 +54,7 @@ class PedidoService(CRUDService):
 
     @classmethod
     def add_items(cls, pedido, items: list):
-        for i, item in enumerate(items):
+        for i, item in enumerate(items, 1):
             item["nu_ordem"] = i
             item_pedido = cls.add_item(pedido, item)
             
@@ -102,19 +102,19 @@ class PedidoService(CRUDService):
         if not (items := data.get("itens", [])):
             errors.append("O pedido enviado não possui itens")
         else:
-            for item in items:
+            for i, item in enumerate(items, 1):
                 try:
                     produto: Produto = Produto.get_by_id(item.get("produto", -1))
                     if produto.qt_estoque < item.get("qt_produto_item", 0):
-                        errors.append(f"Item {item['nu_ordem']}: A quantidade requisitada é inferior ao estoque")
+                        errors.append(f"Item {i}: A quantidade requisitada é inferior ao estoque")
                 except DoesNotExist:
-                    errors.append(f"Item {item['nu_ordem']}: O produto indicado não existe")
+                    errors.append(f"Item {i}: O produto indicado não existe")
 
                 if item.get("vr_unitario", 0) <= 0:
-                    errors.append(f"Item {item['nu_ordem']}: O valor unitário do produto deve ser positivo e maior que 0")
+                    errors.append(f"Item {i}: O valor unitário do produto deve ser positivo e maior que 0")
 
                 if item.get("qt_produto_item", 0) <= 0:
-                    errors.append(f"Item {item['nu_ordem']}: A quantidade de produto deve ser positiva e maior que 0")
+                    errors.append(f"Item {i}: A quantidade de produto deve ser positiva e maior que 0")
 
         if errors:
             raise RegraNegocioError(*errors)
