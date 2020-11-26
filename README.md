@@ -1,6 +1,6 @@
 # Sistema de Pedidos
 
-how4-challenge-api é o componente que representa o back-end do projeto HoW4 (Hands on Work 4), disciplina contida no curso de sistemas da informação da UNIVALI;
+how4-api é o componente que representa o back-end do projeto HoW4 (Hands on Work 4), disciplina contida no curso de sistemas da informação da UNIVALI;
 
 ## Resumo
 
